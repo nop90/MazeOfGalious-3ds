@@ -1703,7 +1703,7 @@ void GameCycle(BYTE *screen,int dx,int dy)
 				/* Entrando código!!!!: */ 
 				memset(screen,0,dx*dy);
 #ifdef _3DS
-				tile_print("SELECT THE SAVE SLOT: A B X L R",TILE_SIZE_X,TILE_SIZE_Y*7,screen,dx,dy);
+				tile_print("SELECT THE SAVE SLOT: A B X L R",TILE_SIZE_X*4,TILE_SIZE_Y*4,screen,dx,dy);
 
 				tile_print("TO GO TO LOADED GAME PRESS: START",TILE_SIZE_X*3,TILE_SIZE_Y*6,screen,dx,dy);
 				tile_print("TO GO TO TITLE SCREEN PRESS: SELECT",TILE_SIZE_X*2,TILE_SIZE_Y*8,screen,dx,dy);
