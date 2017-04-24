@@ -1709,6 +1709,7 @@ bool loadroom(int map,int map_x,int map_y)
 	} /* if */ 
 
 #ifdef _3DS
+	clear_typed_word();
 	sprintf(filename,"romfs:/rooms/%s%.2i%.2i.txt",prefixes[map],map_x,map_y);
 #else
 	sprintf(filename,"rooms/%s%.2i%.2i.txt",prefixes[map],map_x,map_y);
@@ -2625,9 +2626,9 @@ void configuracion_por_defecto(void)
 	LEFT_KEY=SDLK_LEFT;
 	RIGHT_KEY=SDLK_RIGHT;
 #ifdef _3DS
-	SWORD_KEY=SDLK_a;
-	WEAPON_KEY=SDLK_b;
-	ITEM_KEY=SDLK_x;
+	SWORD_KEY=SDLK_SPACE;
+	WEAPON_KEY=SDLK_TAB;
+	ITEM_KEY=SDLK_BACKSPACE;
 	PAUSE_KEY=SDLK_ESCAPE;
 	// default gfx set: naramura
 	act_g_path=0;
@@ -2802,7 +2803,7 @@ void clear_typed_word(void)
 void check_typed_word(void)
 {
 	BYTE *keyboard;
-
+char temp[17];
 	SDL_PumpEvents();
 	keyboard = (unsigned char *)SDL_GetKeyState(NULL);
 
@@ -2831,7 +2832,6 @@ bool typed_word_p(char *word)
 		str=SDL_GetKeyName(last_word[i]);
 		if (str[1]!=0 || str[0]!=c) return false;
 	} /* for */ 
-
 	return true;
 } /* typed_word_p */ 
 

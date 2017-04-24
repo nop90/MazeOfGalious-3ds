@@ -139,28 +139,30 @@ void init_paths(void)
 #elif defined(_3DS)
 void init_paths(void) {
 
-	n_g_paths=6;
-	n_s_paths=6;
-	s_paths=new char *[6];
-	g_paths=new char *[6];
+	n_g_paths=7;
+	n_s_paths=7;
+	s_paths=new char *[7];
+	g_paths=new char *[7];
 		
-	for (int i=0; i<6;i++) {
+	for (int i=0; i<7;i++) {
 		s_paths[i]=new char[NAME_MAX_LEN];
 		g_paths[i]=new char[NAME_MAX_LEN];
 	} 
 
 	strcpy(g_paths[0],"romfs:/graphics/naramura/");
-	strcpy(g_paths[1],"romfs:/graphics/original/");
-	strcpy(g_paths[2],"romfs:/graphics/alternate/");
-	strcpy(g_paths[3],"romfs:/graphics/alfonso/");
-	strcpy(g_paths[4],"romfs:/graphics/boltian/");
-	strcpy(g_paths[5],"romfs:/graphics/hinox/");
+	strcpy(g_paths[1],"romfs:/graphics/Zan/");
+	strcpy(g_paths[2],"romfs:/graphics/original/");
+	strcpy(g_paths[3],"romfs:/graphics/alternate/");
+	strcpy(g_paths[4],"romfs:/graphics/alfonso/");
+	strcpy(g_paths[5],"romfs:/graphics/boltian/");
+	strcpy(g_paths[6],"romfs:/graphics/hinox/");
 	strcpy(s_paths[0],"romfs:/sound/jorito/");
-	strcpy(s_paths[1],"romfs:/sound/original/");
-	strcpy(s_paths[2],"romfs:/sound/alternate/");
-	strcpy(s_paths[3],"romfs:/sound/Bart/");
-	strcpy(s_paths[4],"romfs:/sound/Rob/");
-	strcpy(s_paths[5],"romfs:/sound/wolf/");
+	strcpy(s_paths[1],"romfs:/sound/Zan/");
+	strcpy(s_paths[2],"romfs:/sound/original/");
+	strcpy(s_paths[3],"romfs:/sound/alternate/");
+	strcpy(s_paths[4],"romfs:/sound/Bart/");
+	strcpy(s_paths[5],"romfs:/sound/Rob/");
+	strcpy(s_paths[6],"romfs:/sound/wolf/");
 
 	act_g_path=0;
 	act_s_path=0;

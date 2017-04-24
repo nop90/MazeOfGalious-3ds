@@ -46,6 +46,7 @@ int init_time = 0;
 #ifdef _3DS
 char *default_g_path = "romfs:/graphics/original/";
 char *default_s_path = "romfs:/sound/original/";
+extern int STATE;
 #else
 char *default_g_path = "graphics/original/";
 char *default_s_path = "sound/original/";
@@ -96,6 +97,14 @@ int main(int argc, char** argv)
 	SDL_N3DSKeyBind(KEY_CPAD_DOWN|KEY_CSTICK_DOWN, SDLK_DOWN);
 	SDL_N3DSKeyBind(KEY_CPAD_LEFT|KEY_CSTICK_LEFT, SDLK_LEFT);
 	SDL_N3DSKeyBind(KEY_CPAD_RIGHT|KEY_CSTICK_RIGHT, SDLK_RIGHT);
+	SDL_N3DSKeyBind(KEY_A, SDLK_SPACE);
+	SDL_N3DSKeyBind(KEY_B, SDLK_TAB);
+	SDL_N3DSKeyBind(KEY_X, SDLK_BACKSPACE);
+	SDL_N3DSKeyBind(KEY_Y, SDLK_HASH);
+	SDL_N3DSKeyBind(KEY_L, SDLK_LCTRL);
+	SDL_N3DSKeyBind(KEY_R, SDLK_RCTRL);
+
+	extern SDLKey last_word[16];
 #else
 	screen = initializeSDL((fullscreen ? SDL_FULLSCREEN : 0));
 #endif
@@ -112,7 +121,6 @@ int main(int argc, char** argv)
 	} /* if */ 
 
 	GameInit(SCREEN_X, SCREEN_Y);
-
 	SDL_FillRect(screen, NULL, 0);
 	while (!quit) {
 	
@@ -188,6 +196,7 @@ FIXME: the code below is a big copy/paste; it should be in a separate function i
                         } // if
                     } // if
 #else
+#ifndef _3DS
                     if (event.key.keysym.sym == SDLK_RETURN)
                     {
 						if (IsAltPressed2()) {
@@ -196,11 +205,7 @@ FIXME: the code below is a big copy/paste; it should be in a separate function i
 							SDL_InitSubSystem(SDL_INIT_VIDEO);
 							
 							if (SDL_WasInit(SDL_INIT_VIDEO)) {
-#ifdef _3DS
-								screen = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, COLOUR_DEPTH, (fullscreen ? SDL_FULLSCREEN : 0));
-#else
 								screen = SDL_SetVideoMode(SCREEN_X, SCREEN_Y, COLOUR_DEPTH, SDL_HWPALETTE|(fullscreen ? SDL_FULLSCREEN : 0));
-#endif								
 								if (screen == NULL) {
 									output_debug_message( "Couldn't set %ix%ix%i", SCREEN_X, SCREEN_Y, COLOUR_DEPTH);
 									if (fullscreen) {
@@ -226,11 +231,31 @@ FIXME: the code below is a big copy/paste; it should be in a separate function i
                         }
                     }
 #endif
+#endif
 				
 					// Change graphic set with either F10 or 9 (F10 is already used in OSX)
 
 #ifdef _3DS						
-					if (event.key.keysym.sym == SDLK_l) {
+					if (event.key.keysym.sym == SDLK_HASH && STATE >3) { // oper keyboard app
+						SwkbdState swkbd;
+						char mybuf[12];
+						
+						SwkbdButton button = SWKBD_BUTTON_NONE;
+						swkbdInit(&swkbd, SWKBD_TYPE_QWERTY, 1, 10);
+						swkbdSetInitialText(&swkbd, mybuf);
+						swkbdSetValidation(&swkbd, SWKBD_ANYTHING,SWKBD_FILTER_DIGITS | SWKBD_FILTER_AT | SWKBD_FILTER_PERCENT | SWKBD_FILTER_BACKSLASH , 10);
+						button = swkbdInputText(&swkbd, mybuf, sizeof(mybuf));
+
+						if (button != SWKBD_BUTTON_NONE)
+							for(int i=0;i<strlen(mybuf);i++)
+								if(mybuf[i]>='a' && mybuf[i]<='z') {
+								 
+									for(int j=15;j>0;j--) last_word[j]=last_word[j-1];
+									last_word[0]=SDLKey(mybuf[i]);
+							} 
+					}
+
+					if (event.key.keysym.sym == SDLK_LCTRL && STATE ==2) {
 #else
 					if (event.key.keysym.sym == SDLK_F10 || event.key.keysym.sym == SDLK_9) {
 #endif
@@ -242,11 +267,7 @@ FIXME: the code below is a big copy/paste; it should be in a separate function i
 						g_path = g_paths[act_g_path];
 						ReleaseGraphics();
 						ReloadGraphics(SCREEN_X, SCREEN_Y);
-#ifdef _3DS						
 						guardar_configuracion("MoG.cfg");
-#else
-						guardar_configuracion("MoG.cfg");
-#endif
 						if (fighting_demon != 0) {
 							redo_demonintro(fighting_demon, 0, SCREEN_X, SCREEN_Y);
 						}
@@ -254,7 +275,7 @@ FIXME: the code below is a big copy/paste; it should be in a separate function i
 
 					// Change sound set with either F11 or 0 (F10 is already used in OSX)
 #ifdef _3DS						
-					if (event.key.keysym.sym == SDLK_r) {
+					if (event.key.keysym.sym == SDLK_RCTRL && STATE ==2) {
 #else
 					if (event.key.keysym.sym == SDLK_F11 || event.key.keysym.sym == SDLK_0) {
 #endif
@@ -267,11 +288,7 @@ FIXME: the code below is a big copy/paste; it should be in a separate function i
 						ReleaseSound(false);
 						ReloadSound();
 						music_recovery();
-#ifdef _3DS						
 						guardar_configuracion("MoG.cfg");
-#else
-						guardar_configuracion("MoG.cfg");
-#endif
 						Mix_VolumeMusic(music_volume);
 						SetSFXVolume(sfx_volume);
 					}
@@ -331,7 +348,7 @@ SDL_Surface* initializeSDL(int moreflags)
 	SDL_Surface *screen;
 
 #ifdef _3DS
-	int flags = moreflags;
+	int flags = moreflags|SDL_FULLSCREEN|SDL_CONSOLEBOTTOM;
 #else
 	int flags = SDL_HWPALETTE|moreflags;
 #endif

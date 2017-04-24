@@ -242,8 +242,8 @@ void passage_mainloop(int map,int map_x,int map_y,unsigned char *screen,int dx,i
 	if (map==0 && map_x==5 && map_y==9) {
 		/* DEMETER */ 
 #ifdef _3DS
-		tile_print("SELECT SAVE SLOT:",TILE_SIZE_X*12,TILE_SIZE_Y*16,screen,dx,dy);
-		tile_print("A B X Y",TILE_SIZE_X*17,TILE_SIZE_Y*18,screen,dx,dy);
+		tile_print("USE THE SAVE SLOT:",TILE_SIZE_X*12,TILE_SIZE_Y*16,screen,dx,dy);
+		tile_print("A B X L R",TILE_SIZE_X*16,TILE_SIZE_Y*18,screen,dx,dy);
 
 #else
 		tile_print("h F5 TO F9",TILE_SIZE_X*6,TILE_SIZE_Y*21,screen,dx,dy);
@@ -256,10 +256,11 @@ void passage_mainloop(int map,int map_x,int map_y,unsigned char *screen,int dx,i
 		int slot=-1;
 		/* Guardar el juego a disco: */ 
 #ifdef _3DS
-		if (keyboard[SDLK_a] && !old_keyboard[SDLK_a]) slot=1;
-		if (keyboard[SDLK_b] && !old_keyboard[SDLK_b]) slot=2;
-		if (keyboard[SDLK_x] && !old_keyboard[SDLK_x]) slot=3;
-		if (keyboard[SDLK_y] && !old_keyboard[SDLK_y]) slot=4;
+		if (keyboard[SDLK_SPACE] && !old_keyboard[SDLK_SPACE]) slot=1;
+		if (keyboard[SDLK_TAB] && !old_keyboard[SDLK_TAB]) slot=2;
+		if (keyboard[SDLK_BACKSPACE] && !old_keyboard[SDLK_BACKSPACE]) slot=3;
+		if (keyboard[SDLK_LCTRL] && !old_keyboard[SDLK_LCTRL]) slot=4;
+		if (keyboard[SDLK_RCTRL] && !old_keyboard[SDLK_RCTRL]) slot=4;
 #else
 		if (keyboard[SDLK_F5] && !old_keyboard[SDLK_F5]) slot=1;
 		if (keyboard[SDLK_F6] && !old_keyboard[SDLK_F6]) slot=2;
@@ -291,7 +292,7 @@ void passage_mainloop(int map,int map_x,int map_y,unsigned char *screen,int dx,i
 
 		if (passage_state==0) {
 #ifdef _3DS
-			tile_print("YOU WANT THAT",TILE_SIZE_X*13,TILE_SIZE_Y*9,screen,dx,dy);
+			tile_print("DO YOU WANT THAT",TILE_SIZE_X*12,TILE_SIZE_Y*9,screen,dx,dy);
 			tile_print("MY MEMORY KEEP THE",TILE_SIZE_X*11,TILE_SIZE_Y*11,screen,dx,dy);
 			tile_print("RECORDS ABOUT YOU?",TILE_SIZE_X*11,TILE_SIZE_Y*13,screen,dx,dy);
 
@@ -377,7 +378,7 @@ void passage_mainloop(int map,int map_x,int map_y,unsigned char *screen,int dx,i
 	
 		if (passage_state==3) {
 #else
-		if (passage_state==3 || passage_state==2 || passage_state==1) { //state 1 and 2 are only to avoid an undefined state, but on 3ds should never happen
+		if (passage_state==3 || passage_state==2 || passage_state==1) { //state 1 and 2 are listed only to avoid an undefined state, but on 3ds should never happen
 #endif	
 			tile_print("SEE YOU AGAIN",TILE_SIZE_X*10,TILE_SIZE_Y*9,screen,dx,dy);
 		} /* if */ 

@@ -297,8 +297,13 @@ int zoom=640;
 
 
 /* Teclas: */ 
+#ifdef _3DS
+SDLKey UP_KEY=SDLK_UP,DOWN_KEY=SDLK_DOWN,LEFT_KEY=SDLK_LEFT,RIGHT_KEY=SDLK_RIGHT;
+SDLKey SWORD_KEY=SDLK_SPACE,WEAPON_KEY=SDLK_TAB,ITEM_KEY=SDLK_BACKSPACE,PAUSE_KEY=SDLK_ESCAPE;
+#else
 SDLKey UP_KEY=SDLK_q,DOWN_KEY=SDLK_a,LEFT_KEY=SDLK_o,RIGHT_KEY=SDLK_p;
 SDLKey SWORD_KEY=SDLK_SPACE,WEAPON_KEY=SDLK_m,ITEM_KEY=SDLK_F1,PAUSE_KEY=SDLK_F2;
+#endif
 SDLKey last_word[16];
 
 char password[48]="UR3FUR3FUR4F423RUR3FUR3FUR3FUR3FUR3FUR3FURS48";
@@ -342,8 +347,8 @@ void GameCycle(BYTE *screen,int dx,int dy)
 //						configuracion_por_defecto();
 //						guardar_configuracion("MoG.cfg");
 //					} /* if */ 
-					GameEnd();
-					GameInit(dx,dy);
+//					GameEnd();
+					if(!konami_bmp) GameInit(dx,dy);
 					HP_objs_reset();
 //					Mix_VolumeMusic(music_volume);
 					SetSFXVolume(sfx_volume);
@@ -366,7 +371,7 @@ void GameCycle(BYTE *screen,int dx,int dy)
 				} /* if */ 
 
 #ifdef _3DS
-				if (keyboard[SDLK_a] || keyboard[SDLK_RETURN]) {
+				if (keyboard[SDLK_SPACE] || keyboard[SDLK_RETURN]) {
 #else
 				if (keyboard[SDLK_SPACE]) {
 #endif
@@ -382,7 +387,7 @@ void GameCycle(BYTE *screen,int dx,int dy)
 				STATE=2;
 			} /* if */ 
 #ifdef _3DS
-			if (keyboard[SDLK_a] || keyboard[SDLK_RETURN]) {
+			if (keyboard[SDLK_SPACE] || keyboard[SDLK_RETURN]) {
 #else
 			if (keyboard[SDLK_SPACE]) {
 #endif
@@ -399,17 +404,17 @@ void GameCycle(BYTE *screen,int dx,int dy)
 //				set_palete((BYTE *)tiles_bmp->get_palete());
 			menu_bmp->draw(0,0,dx,dy,screen,dx,dy,dx);
 #ifdef _3DS						
-			tile_print("PUSH START KEY",TILE_SIZE_X*13,TILE_SIZE_Y*19,screen,dx,dy);
+			tile_print("PUSH A OR START KEY",TILE_SIZE_X*11,TILE_SIZE_Y*19,screen,dx,dy);
 
+			tile_print("PUSH B TO LOAD A GAMESAVE",TILE_SIZE_X*8,TILE_SIZE_Y*21,screen,dx,dy);
 			sprintf(tmp,"R CHANGES GRAPHIC SET: %s",g_path+16);
 			tmp[strlen(tmp)-1]=0;
 			strupr(tmp);
-			tile_print(tmp,TILE_SIZE_X*2,TILE_SIZE_Y*21,screen,dx,dy);
+			tile_print(tmp,TILE_SIZE_X*4,TILE_SIZE_Y*23,screen,dx,dy);
 			sprintf(tmp,"L CHANGES SOUND SET: %s",s_path+13);
 			strupr(tmp);
 			tmp[strlen(tmp)-1]=0;
-			tile_print(tmp,TILE_SIZE_X*2,TILE_SIZE_Y*22,screen,dx,dy);
-//			tile_print("PRESS K TO REDEFINE THE KEYS",TILE_SIZE_X*6,TILE_SIZE_Y*23,screen,dx,dy);
+			tile_print(tmp,TILE_SIZE_X*4,TILE_SIZE_Y*24,screen,dx,dy);
 #else
 			tile_print("PUSH SPACE KEY",TILE_SIZE_X*13,TILE_SIZE_Y*19,screen,dx,dy);
 
@@ -424,7 +429,7 @@ void GameCycle(BYTE *screen,int dx,int dy)
 			tile_print("PRESS K TO REDEFINE THE KEYS",TILE_SIZE_X*6,TILE_SIZE_Y*23,screen,dx,dy);
 #endif
 #ifdef _3DS
-			if (keyboard[SDLK_RETURN]  && !old_keyboard[SDLK_a]) {
+			if ((keyboard[SDLK_RETURN]  && !old_keyboard[SDLK_RETURN]) || (keyboard[SDLK_SPACE]  && !old_keyboard[SDLK_SPACE])){
 #else
 			if (keyboard[SDLK_SPACE]  && !old_keyboard[SDLK_SPACE]) {
 #endif
@@ -436,7 +441,7 @@ void GameCycle(BYTE *screen,int dx,int dy)
 				SUBSTATE=0;
 			} /* if */
 #ifdef _3DS
-			if (keyboard[SDLK_b] && !old_keyboard[SDLK_b]) {
+			if (keyboard[SDLK_TAB] && !old_keyboard[SDLK_TAB]) {
 				STATE=14;
 				SUBSTATE=0;
 			} /* if */ 
@@ -1036,7 +1041,6 @@ void GameCycle(BYTE *screen,int dx,int dy)
 				n_fired_mines=0;
 				loadroom(map,map_x,map_y);
 			} /* if */ 
-
 			/* Pluma: */ 
 			if (item[26] && map==0 && !keyboard[SDLK_RETURN] &&
 				((!old_keyboard[SDLK_1] && keyboard[SDLK_1]) ||
@@ -1447,8 +1451,13 @@ void GameCycle(BYTE *screen,int dx,int dy)
 						!live_character[0]) {
 						tile_print("GAME OVER",TILE_SIZE_X*15,TILE_SIZE_Y*12,screen,dx,dy);
 						if (ZEUS_password && !ZEUS_used) {
+#ifdef _3DS // on 3ds revive with ZEUS password pressing the A button.
+							tile_print("A: CONTINUE",TILE_SIZE_X*14,TILE_SIZE_Y*14,screen,dx,dy);
+							if (keyboard[SDLK_SPACE] && !old_keyboard[SDLK_SPACE]) {
+#else
 							tile_print("F5 CONTINUE",TILE_SIZE_X*14,TILE_SIZE_Y*14,screen,dx,dy);
 							if (keyboard[SDLK_F5] && !old_keyboard[SDLK_F5]) {
+#endif
 								ZEUS_used=true;
 							} /* if */ 
 						} /* if */ 
@@ -1694,9 +1703,9 @@ void GameCycle(BYTE *screen,int dx,int dy)
 				/* Entrando código!!!!: */ 
 				memset(screen,0,dx*dy);
 #ifdef _3DS
-				tile_print("SELECT THE SAVE SLOT TO LOAD: A B X Y",TILE_SIZE_X,TILE_SIZE_Y*4,screen,dx,dy);
+				tile_print("SELECT THE SAVE SLOT: A B X L R",TILE_SIZE_X,TILE_SIZE_Y*7,screen,dx,dy);
 
-				tile_print("TO GO TO LOADED GAME PRESS: HOME",TILE_SIZE_X*4,TILE_SIZE_Y*6,screen,dx,dy);
+				tile_print("TO GO TO LOADED GAME PRESS: START",TILE_SIZE_X*3,TILE_SIZE_Y*6,screen,dx,dy);
 				tile_print("TO GO TO TITLE SCREEN PRESS: SELECT",TILE_SIZE_X*2,TILE_SIZE_Y*8,screen,dx,dy);
 
 #else				
@@ -1735,11 +1744,11 @@ void GameCycle(BYTE *screen,int dx,int dy)
 					/* Recuperar el juego a disco: */ 
 
 #ifdef _3DS
-					if (!old_keyboard[SDLK_a] && keyboard[SDLK_a]) slot=1;
-					if (!old_keyboard[SDLK_b] && keyboard[SDLK_b]) slot=2;
-					if (!old_keyboard[SDLK_x] && keyboard[SDLK_x]) slot=3;
-					if (!old_keyboard[SDLK_y] && keyboard[SDLK_y]) slot=4;
-
+					if (!old_keyboard[SDLK_SPACE] && keyboard[SDLK_SPACE]) slot=1;
+					if (!old_keyboard[SDLK_TAB] && keyboard[SDLK_TAB]) slot=2;
+					if (!old_keyboard[SDLK_BACKSPACE] && keyboard[SDLK_BACKSPACE]) slot=3;
+					if (!old_keyboard[SDLK_LCTRL] && keyboard[SDLK_LCTRL]) slot=4;
+					if (!old_keyboard[SDLK_RCTRL] && keyboard[SDLK_RCTRL]) slot=5;
 #else
 					if (!old_keyboard[SDLK_F5] && keyboard[SDLK_F5]) slot=1;
 					if (!old_keyboard[SDLK_F6] && keyboard[SDLK_F6]) slot=2;
@@ -2063,11 +2072,7 @@ void GameCycle(BYTE *screen,int dx,int dy)
 				} /* for */ 
 
 				if (SUBSTATE>=64*TILE_SIZE_Y ||
-#ifdef _3DS
-					(keyboard[SDLK_a]  && !old_keyboard[SDLK_a])) {
-#else
 					(keyboard[SDLK_SPACE]  && !old_keyboard[SDLK_SPACE])) {
-#endif
 					/* musica: */ 
 					Sound_release_music();
 					STATE=0;
@@ -2373,6 +2378,7 @@ void GameCycle(BYTE *screen,int dx,int dy)
 
 
 	/* Control de pantalla: */ 
+
 	if (STATE==4 || STATE==16) {
 		int zx,zy;
 
@@ -2393,7 +2399,6 @@ void GameCycle(BYTE *screen,int dx,int dy)
 		physic_y[1]=GAME_VIEW_Y;
 		physic_dx[1]=640;
 		physic_dy[1]=400-GAME_VIEW_Y;
-	
 	} else {
 		logic_dx[0]=physic_dx[0]=640;
 		logic_dy[0]=physic_dy[0]=400;

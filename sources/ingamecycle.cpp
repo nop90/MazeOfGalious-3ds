@@ -689,8 +689,13 @@ void GameInGameCycle(int dx,int dy)
 
 
 	if (item[19] &&
+#ifdef _3DS // to actvate the bible press L and R at the same time 
+		((keyboard[SDLK_LCTRL] && !old_keyboard[SDLK_LCTRL]) &&
+		 (keyboard[SDLK_RCTRL] && !old_keyboard[SDLK_RCTRL])) &&
+#else	
 		((keyboard[SDLK_LCTRL] && !old_keyboard[SDLK_LCTRL]) ||
 		 (keyboard[SDLK_RCTRL] && !old_keyboard[SDLK_RCTRL])) &&
+#endif
 		bible_counter>0 && bible_subcounter==0) {
 		bible_counter--;
 		bible_subcounter=128;

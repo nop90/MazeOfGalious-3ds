@@ -212,7 +212,7 @@ Sound_Sample *Sound_create_stream(char *file)
 
 void Sound_create_music(char *f1,char *f2,char *f3)
 {
-return; // NOP90: for 3ds port music needs fix
+//return; // NOP90: for 3ds port, music needs fix
 	char tmp[128];
 	int seq_len=0;
 
@@ -365,8 +365,8 @@ void myMusicPlayer(void *udata, Uint8 *stream, int len)
 
 					if ((music_sound[music_position]->flags&SOUND_SAMPLEFLAG_EOF)) {
 						/* End of file: */ 
-						if (music_loaded[music_position+1]) {
-							music_position++;
+					if (music_loaded[music_position+1]) {
+						music_position++;
 						} /* if */ 
 						Sound_Rewind(music_sound[music_position]);
 					} else {
@@ -390,6 +390,7 @@ void myMusicPlayer(void *udata, Uint8 *stream, int len)
 				} /* if */ 
 			} /* while */ 
 		} else {
+
 			/* No music to play: */ 
 			for(i=0;i<len;i++) stream[i]=0;
 		} /* if */ 
