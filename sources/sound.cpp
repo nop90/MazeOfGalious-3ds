@@ -132,7 +132,11 @@ SOUNDT Sound_create_sound(char *file,int flags)
 
 void Delete_sound(SOUNDT s)
 {
-	if (sound_enabled) Mix_FreeChunk(s);
+	if (sound_enabled) 
+		if(s) {
+			Mix_FreeChunk(s);
+			s = NULL;
+		}	
 } /* Delete_sound */ 
 
 
@@ -212,7 +216,6 @@ Sound_Sample *Sound_create_stream(char *file)
 
 void Sound_create_music(char *f1,char *f2,char *f3)
 {
-//return; // NOP90: for 3ds port, music needs fix
 	char tmp[128];
 	int seq_len=0;
 
@@ -295,6 +298,9 @@ void Sound_temporary_release_music(void)
 		playing_music=false;
 		for(i=0;i<3;i++) {
 			if (music_loaded[i]) Sound_FreeSample(music_sound[i]);
+#ifdef _3DS //why not clear a not valid pointer?
+			music_loaded[i]=false;
+#endif
 		} /* if */ 
 	} /* if */ 
 } /* Sound_release_music */ 

@@ -3094,6 +3094,9 @@ void ReloadStuff(int dx,int dy)
 
 void ReloadSound(void)
 {	
+#ifdef _3DS 
+printf("Loading sounds. Please wait.\n");
+#endif	
 	/* Sonidos: */  
 	S_gamestart=Sound_create_sound("gamestart",0);
 	S_jump=Sound_create_sound("jump",0); 
@@ -3162,6 +3165,9 @@ void ReloadSound(void)
 	S_lizardtongue=Sound_create_sound("lizardtongue",0);
 	S_bdemonbullet=Sound_create_sound("bdemonbullet",0);
 	S_lightning=Sound_create_sound("lightning",0);
+#ifdef _3DS
+printf("\e[2J\e[H");
+#endif
 } /* ReloadSound */ 
 
 

@@ -123,6 +123,9 @@ void newgame(void);
 
 void ReloadGraphics(int dx,int dy)
 {
+#ifdef _3DS 
+printf("Loading graphics. Please wait.\n");
+#endif	
 	int i;
 
 	/* Gráficos: */ 
@@ -1386,6 +1389,9 @@ void ReloadGraphics(int dx,int dy)
 		tiles[demon_tile+7]=new CTile(final_bmp,TILE_SIZE_X*30,0,TILE_SIZE_X*8,TILE_SIZE_Y*4,T_NADA);
 	} /* if */ 
 
+#ifdef _3DS
+printf("\e[2J\e[H");
+#endif
 } /* ReloadGraphics */ 
 
 

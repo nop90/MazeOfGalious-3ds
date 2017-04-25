@@ -18,6 +18,10 @@
 #include "object.h"
 #include "filehandling.h"
 
+#ifdef _3DS
+#include "3ds.h"
+#endif
+
 /* Paths: */ 
 
 
@@ -334,6 +338,29 @@ void GameCycle(BYTE *screen,int dx,int dy)
 	keyboard = (unsigned char *)SDL_GetKeyState(NULL);
 
 	frame_counter++;
+
+#ifdef _3DS
+					if ((keyboard[SDLK_HASH]  && !old_keyboard[SDLK_HASH]) && STATE >3) { // open keyboard app
+						SwkbdState swkbd;
+						char mybuf[12];
+						
+						SwkbdButton button = SWKBD_BUTTON_NONE;
+						swkbdInit(&swkbd, SWKBD_TYPE_QWERTY, 1, 10);
+						swkbdSetInitialText(&swkbd, mybuf);
+						swkbdSetFeatures(&swkbd, SWKBD_DARKEN_TOP_SCREEN);
+						swkbdSetValidation(&swkbd, SWKBD_ANYTHING,SWKBD_FILTER_DIGITS | SWKBD_FILTER_AT | SWKBD_FILTER_PERCENT | SWKBD_FILTER_BACKSLASH , 10);
+						button = swkbdInputText(&swkbd, mybuf, sizeof(mybuf));
+
+						if (button != SWKBD_BUTTON_NONE)
+							for(int i=0;i<strlen(mybuf);i++)
+								if(mybuf[i]>='a' && mybuf[i]<='z') {
+									for(int j=15;j>0;j--) last_word[j]=last_word[j-1];
+									last_word[0]=SDLKey(mybuf[i]);
+								} else if(mybuf[i]>='0' && mybuf[i]<='9') {
+									keyboard[SDLKey(mybuf[i])]=1;
+								}
+					}
+#endif
 
 	switch(STATE) {
 
@@ -756,7 +783,11 @@ void GameCycle(BYTE *screen,int dx,int dy)
 
 			drawstats(screen,dx,dy);
 
+#ifdef _3DS
+			if (keyboard[SDLK_RETURN] && !old_keyboard[SDLK_RETURN]) {
+#else
 			if (keyboard[SDLK_ESCAPE] && !old_keyboard[SDLK_ESCAPE]) {
+#endif
 				OLDSTATE=STATE;
 				MENUOPTION=0;
 				STATE=19;
@@ -1020,7 +1051,11 @@ void GameCycle(BYTE *screen,int dx,int dy)
 
 			/* Halo de ángel: */ 
 			if (item[8] && (fighting_demon==0 || fighting_demon==432) &&
+#ifdef _3DS
+				!old_keyboard[SDLK_ESCAPE] && keyboard[SDLK_ESCAPE]) 
+#else
 				!old_keyboard[SDLK_RETURN] && keyboard[SDLK_RETURN]) 
+#endif
 			{
 				if (map!=0) {
 					STATE=9;
@@ -1126,7 +1161,7 @@ void GameCycle(BYTE *screen,int dx,int dy)
 				} /* if */ 
 			} /* if */ 
 
-			if (keyboard[SDLK_ESCAPE] && !old_keyboard[SDLK_ESCAPE]) {
+			if (keyboard[SDLK_RETURN] && !old_keyboard[SDLK_RETURN]) {
 				OLDSTATE=STATE;
 				MENUOPTION=0;
 				STATE=19;
@@ -2331,7 +2366,11 @@ void GameCycle(BYTE *screen,int dx,int dy)
 					   else sprintf(tmp,"WORLD %.2i  %s%i",map,letter[map_x],map_y+1);
 				tile_print(tmp,TILE_SIZE_X*13,TILE_SIZE_Y*12,screen,dx,dy);
 
+#ifdef _3DS
+				if (keyboard[SDLK_RETURN] && !old_keyboard[SDLK_RETURN]) {
+#else
 				if (keyboard[SDLK_ESCAPE] && !old_keyboard[SDLK_ESCAPE]) {
+#endif
 					STATE=OLDSTATE;
 					guardar_configuracion("MoG.cfg");
 				} /* if */ 

@@ -103,8 +103,6 @@ int main(int argc, char** argv)
 	SDL_N3DSKeyBind(KEY_Y, SDLK_HASH);
 	SDL_N3DSKeyBind(KEY_L, SDLK_LCTRL);
 	SDL_N3DSKeyBind(KEY_R, SDLK_RCTRL);
-
-	extern SDLKey last_word[16];
 #else
 	screen = initializeSDL((fullscreen ? SDL_FULLSCREEN : 0));
 #endif
@@ -149,11 +147,14 @@ int main(int argc, char** argv)
                         }
                     }
 #endif
+#ifdef _3DS
+					if (event.key.keysym.sym == SDLK_ESCAPE && STATE == 2) {
+#else
                     // default quit: F12
                     if (event.key.keysym.sym == SDLK_F12) {
+#endif
                         quit = true;
                     } /* if */
-										
 
 /*
 FIXME: the code below is a big copy/paste; it should be in a separate function in stead
@@ -236,25 +237,6 @@ FIXME: the code below is a big copy/paste; it should be in a separate function i
 					// Change graphic set with either F10 or 9 (F10 is already used in OSX)
 
 #ifdef _3DS						
-					if (event.key.keysym.sym == SDLK_HASH && STATE >3) { // oper keyboard app
-						SwkbdState swkbd;
-						char mybuf[12];
-						
-						SwkbdButton button = SWKBD_BUTTON_NONE;
-						swkbdInit(&swkbd, SWKBD_TYPE_QWERTY, 1, 10);
-						swkbdSetInitialText(&swkbd, mybuf);
-						swkbdSetValidation(&swkbd, SWKBD_ANYTHING,SWKBD_FILTER_DIGITS | SWKBD_FILTER_AT | SWKBD_FILTER_PERCENT | SWKBD_FILTER_BACKSLASH , 10);
-						button = swkbdInputText(&swkbd, mybuf, sizeof(mybuf));
-
-						if (button != SWKBD_BUTTON_NONE)
-							for(int i=0;i<strlen(mybuf);i++)
-								if(mybuf[i]>='a' && mybuf[i]<='z') {
-								 
-									for(int j=15;j>0;j--) last_word[j]=last_word[j-1];
-									last_word[0]=SDLKey(mybuf[i]);
-							} 
-					}
-
 					if (event.key.keysym.sym == SDLK_LCTRL && STATE ==2) {
 #else
 					if (event.key.keysym.sym == SDLK_F10 || event.key.keysym.sym == SDLK_9) {
